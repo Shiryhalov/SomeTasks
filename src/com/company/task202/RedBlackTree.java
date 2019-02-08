@@ -37,12 +37,6 @@ public class RedBlackTree {
         private Node rightChild;
 
         /**
-         * Конструктор по умолчанию
-         */
-        public Node() {
-        }
-
-        /**
          * Конструктор для узла
          *
          * @param key   ключ
@@ -53,39 +47,21 @@ public class RedBlackTree {
             this.value = value;
         }
 
+        /**
+         * Конструктор для узла
+         *
+         * @param parent    родитель
+         * @param nodeColor цвет узла
+         */
         Node(Node parent, boolean nodeColor) {
             this.parent = parent;
             this.nodeColor = nodeColor;
         }
 
-        Node(int key, String value, boolean nodeColor, Node leftChild, Node rightChild) {
-            this.key = key;
-            this.value = value;
-            this.nodeColor = nodeColor;
-            this.leftChild = leftChild;
-            this.rightChild = rightChild;
-        }
-
         /**
-         * Конструктор для узла
-         *
-         * @param key        ключ
-         * @param value      значение
-         * @param nodeColor  цвет узла
-         * @param parent     родитель
-         * @param leftChild  левый потомок
-         * @param rightChild правый потомок
+         * Get-еры, Set-еры:
          */
-        Node(int key, String value, boolean nodeColor, Node parent, Node leftChild, Node rightChild) {
-            this.key = key;
-            this.value = value;
-            this.nodeColor = nodeColor;
-            this.parent = parent;
-            this.leftChild = leftChild;
-            this.rightChild = rightChild;
-        }
-
-        public int getKey() {
+        int getKey() {
             return key;
         }
 
@@ -93,7 +69,7 @@ public class RedBlackTree {
             this.key = key;
         }
 
-        public String getValue() {
+        String getValue() {
             return value;
         }
 
@@ -101,11 +77,11 @@ public class RedBlackTree {
             this.value = value;
         }
 
-        public boolean isNodeColor() {
+        boolean isNodeColor() {
             return nodeColor;
         }
 
-        public void setNodeColor(boolean nodeColor) {
+        void setNodeColor(boolean nodeColor) {
             this.nodeColor = nodeColor;
         }
 
@@ -117,31 +93,31 @@ public class RedBlackTree {
             this.nodeColor = true;
         }
 
-        public Node getParent() {
+        Node getParent() {
             return parent;
         }
 
-        public void setParent(Node parent) {
+        void setParent(Node parent) {
             this.parent = parent;
         }
 
-        public Node getLeftChild() {
+        Node getLeftChild() {
             return leftChild;
         }
 
-        public void setLeftChild(Node leftChild) {
+        void setLeftChild(Node leftChild) {
             this.leftChild = leftChild;
         }
 
-        public Node getRightChild() {
+        Node getRightChild() {
             return rightChild;
         }
 
-        public void setRightChild(Node rightChild) {
+        void setRightChild(Node rightChild) {
             this.rightChild = rightChild;
         }
 
-        public Node getGrandfather() {
+        Node getGrandfather() {
             if (getParent() != null) {
                 return getParent().getParent();
             } else {
@@ -149,7 +125,7 @@ public class RedBlackTree {
             }
         }
 
-        public Node getUncle() {
+        Node getUncle() {
             Node grandfather = getGrandfather();
             if (grandfather != null) {
                 if (grandfather.getLeftChild() == getParent() && grandfather.getRightChild().value != null) {
@@ -159,14 +135,6 @@ public class RedBlackTree {
                 } else return null;
             }
             return null;
-        }
-
-        public void setUncleColor(boolean color) {
-            getUncle().setNodeColor(color);
-        }
-
-        public void setGrandfatherColor(boolean color) {
-            getGrandfather().setNodeColor(color);
         }
 
         /**
@@ -180,6 +148,12 @@ public class RedBlackTree {
 
     private Node root;
 
+    /**
+     * Добавление узла в дерево
+     *
+     * @param key   ключ
+     * @param value значение
+     */
     public void addNode(int key, String value) {
         Node newNode = new Node(key, value);
         //Для первого узла
@@ -189,7 +163,6 @@ public class RedBlackTree {
             newNode.setLeftChild(new Node(newNode, false));
             newNode.setRightChild(new Node(newNode, false));
             root = newNode;
-            return;
         } else { // Не для первого узла
             Node currentNode = root;
             Node parent;
@@ -197,24 +170,24 @@ public class RedBlackTree {
                 parent = currentNode;
                 //Проверка ключей
                 if (key < currentNode.getKey()) {
-                    currentNode = currentNode.leftChild;
+                    currentNode = currentNode.getLeftChild();
                     if (currentNode.getValue() == null) {
-                        newNode.setNodeColor(true);
+                        newNode.makeItRed();
                         newNode.setLeftChild(new Node(currentNode, false));
                         newNode.setRightChild(new Node(currentNode, false));
+                        newNode.setParent(parent);
                         parent.setLeftChild(newNode);
-                        parent.leftChild.setParent(parent);
                         fixInsertion(parent.getLeftChild());
                         return;
                     }
                 } else if (key > currentNode.getKey()) {
-                    currentNode = currentNode.rightChild;
+                    currentNode = currentNode.getRightChild();
                     if (currentNode.getValue() == null) {
-                        newNode.setNodeColor(true);
+                        newNode.makeItRed();
                         newNode.setLeftChild(new Node(currentNode, false));
                         newNode.setRightChild(new Node(currentNode, false));
+                        newNode.setParent(parent);
                         parent.setRightChild(newNode);
-                        parent.rightChild.setParent(parent);
                         fixInsertion(parent.getRightChild());
                         return;
                     }
@@ -226,85 +199,112 @@ public class RedBlackTree {
         }
     }
 
-    private void fixInsertion(Node t) {
-        if (t == root) {
-            t.makeItBlack();
+    /**
+     * Исправление дерева
+     *
+     * @param node узел
+     */
+    private void fixInsertion(Node node) {
+        if (node == root) {
+            node.makeItBlack();
             return;
         }
-        while (t.getParent() != null && t.getParent().isNodeColor()) {
-            if (t.getGrandfather().getLeftChild() == t.getParent()) {
-                if (t.getUncle() != null) {
-                    if (t.getUncle().isNodeColor()) {
-                        t.getParent().setNodeColor(false);
-                        t.setUncleColor(false);
-                        t.setGrandfatherColor(true);
-                        t = t.getGrandfather();
-                    }
+        Node temp;
+        while (node.getParent() != null && node.getParent().isNodeColor()) {
+            if (node.getGrandfather().getLeftChild() == node.getParent()) {
+                temp = node.getGrandfather().getRightChild();
+                if (temp.isNodeColor()) {
+                    temp.makeItBlack();
+                    node.getParent().makeItBlack();
+                    node.getGrandfather().makeItRed();
+                    node = node.getGrandfather();
                 } else {
-                    if (t == t.getParent().getRightChild()) {
-                        t = t.getParent();
-                        leftRotate(t);
+                    if (node == node.getParent().getRightChild()) {
+                        node = node.getParent();
+                        leftRotate(node);
                     }
-                    t.getParent().setNodeColor(false);
-                    t.setGrandfatherColor(true);
-                    rightRotate(t.getGrandfather());
+                    node.getParent().makeItBlack();
+                    node.getGrandfather().makeItRed();
+                    rightRotate(node.getGrandfather());
                 }
             } else {
-                if (t.getUncle() != null) {
-                    if (t.getUncle().isNodeColor()) {
-                        t.getParent().setNodeColor(false);
-                        t.setUncleColor(false);
-                        t.setGrandfatherColor(true);
-                        t = t.getGrandfather();
-                    }
+                temp = node.getGrandfather().getLeftChild();
+                if (temp.isNodeColor()) {
+                    temp.makeItBlack();
+                    node.getParent().makeItBlack();
+                    node.getGrandfather().makeItRed();
+                    node = node.getGrandfather();
                 } else {
-                    if (t == t.getParent().getRightChild()) {
-                        t = t.getParent();
-                        rightRotate(t);
+                    if (node == node.getParent().getLeftChild()) {
+                        node = node.getParent();
+                        rightRotate(node);
                     }
-                    t.getParent().setNodeColor(false);
-                    t.setGrandfatherColor(true);
-                    leftRotate(t.getGrandfather());
+                    node.getParent().makeItBlack();
+                    node.getGrandfather().makeItRed();
+                    leftRotate(node.getGrandfather());
                 }
             }
         }
-        root.setNodeColor(false);
+        root.makeItBlack();
     }
 
+    /**
+     * Левый поворот дерева
+     *
+     * @param node добавленный узел
+     */
     private void leftRotate(Node node) {
         Node nodeParent = node.getParent();
         Node nodeRight = node.getRightChild();
-        if (nodeParent != null) {
+        if (nodeParent != null && nodeParent.getValue() != null) {
             if (nodeParent.getLeftChild() == node) {
                 nodeParent.setLeftChild(nodeRight);
+                nodeRight.setParent(nodeParent);
             } else {
                 nodeParent.setRightChild(nodeRight);
+                nodeRight.setParent(nodeParent);
             }
         } else {
             root = nodeRight;
             root.setParent(null);
         }
         node.setRightChild(nodeRight.getLeftChild());
+        nodeRight.getLeftChild().setParent(node);
         nodeRight.setLeftChild(node);
+        node.setParent(nodeRight);
     }
 
+    /**
+     * Правый поворот дерева
+     *
+     * @param node добавленный узел
+     */
     private void rightRotate(Node node) {
         Node nodeParent = node.getParent();
         Node nodeLeft = node.getLeftChild();
-        if (nodeParent != null) {
+        if (nodeParent != null && nodeParent.getValue() != null) {
             if (nodeParent.getLeftChild() == node) {
                 nodeParent.setLeftChild(nodeLeft);
+                nodeLeft.setParent(nodeParent);
             } else {
                 nodeParent.setRightChild(nodeLeft);
+                nodeLeft.setParent(nodeParent);
             }
         } else {
             root = nodeLeft;
             root.setParent(null);
         }
         node.setLeftChild(nodeLeft.getRightChild());
+        nodeLeft.getRightChild().setParent(node);
         nodeLeft.setRightChild(node);
+        node.setParent(nodeLeft);
     }
 
+    /**
+     * Вывод дерева
+     *
+     * @param currentNode current node
+     */
     private void traverseTree(Node currentNode) {
         if (currentNode.getLeftChild() != null && currentNode.getRightChild() != null) {
             traverseTree(currentNode.getLeftChild());
@@ -318,6 +318,9 @@ public class RedBlackTree {
         traverseTree(root);
     }
 
+    /**
+     * Get-ер для корня дерева
+     */
     public Node getRoot() {
         return root;
     }
