@@ -10,7 +10,7 @@ public class RedBlackTree {
     /**
      * Класс для представления узла
      */
-    public static class Node {
+    private static class Node {
         /**
          * Ключ
          */
