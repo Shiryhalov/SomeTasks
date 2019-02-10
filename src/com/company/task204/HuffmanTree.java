@@ -1,8 +1,7 @@
 package com.company.task204;
 
 import java.io.*;
-import java.util.PriorityQueue;
-import java.util.TreeMap;
+import java.util.*;
 
 public class HuffmanTree implements Comparable<HuffmanTree> {
     Node root;
@@ -29,12 +28,12 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
         private Node rightChild;
         private Node parent;
 
-        public Node(Integer frequency, Character character) {
+        Node(Integer frequency, Character character) {
             this.frequency = frequency;
             this.character = character;
         }
 
-        public Node(HuffmanTree leftChild, HuffmanTree rightChild) {
+        Node(HuffmanTree leftChild, HuffmanTree rightChild) {
             this.frequency = leftChild.root.frequency + rightChild.root.frequency;
             this.leftChild = leftChild.root;
             this.rightChild = rightChild.root;
@@ -42,7 +41,7 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
             rightChild.root.setParent(this);
         }
 
-        public Integer getFrequency() {
+        Integer getFrequency() {
             return frequency;
         }
 
@@ -50,7 +49,7 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
             this.frequency = frequency;
         }
 
-        public Character getCharacter() {
+        Character getCharacter() {
             return character;
         }
 
@@ -58,7 +57,7 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
             this.character = character;
         }
 
-        public Node getLeftChild() {
+        Node getLeftChild() {
             return leftChild;
         }
 
@@ -67,7 +66,7 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
             leftChild.setParent(this);
         }
 
-        public Node getRightChild() {
+        Node getRightChild() {
             return rightChild;
         }
 
@@ -76,11 +75,11 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
             rightChild.setParent(this);
         }
 
-        public Node getParent() {
+        Node getParent() {
             return parent;
         }
 
-        public void setParent(Node parent) {
+        void setParent(Node parent) {
             this.parent = parent;
         }
 
@@ -93,7 +92,26 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
         }
     }
 
-    public void buildTree(int[] frequencyChar) {
+    private static int[] frequencyCounter(String inputName) {
+        int[] frequencyChar = new int[256];
+        StringBuilder string = new StringBuilder();
+        try (InputStream input = new FileInputStream(inputName)) {
+            int size = input.available();
+            for (int i = 0; i < size; i++) {
+                string.append((char) input.read());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.print("Exception");
+        }
+        for (char c : string.toString().toCharArray()) {
+            frequencyChar[c]++;
+        }
+        return frequencyChar;
+    }
+
+    public void buildTree(String inputName) {
+        int[] frequencyChar = frequencyCounter(inputName);
         PriorityQueue<HuffmanTree> trees = new PriorityQueue<>();
         for (int i = 0; i < frequencyChar.length; i++) {
             if (frequencyChar[i] > 0) {
@@ -130,9 +148,15 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
         }
     }
 
-    public static void encode(String string, TreeMap<Character, StringBuilder> codeTable) {
-        try (OutputStream output = new FileOutputStream("src/com/company/task204/res")) {
-            char[] charArray = string.toCharArray();
+    public static void encode(String inputName, TreeMap<Character, StringBuilder> codeTable) {
+        StringBuilder string = new StringBuilder();
+        try (InputStream input = new FileInputStream(inputName);
+             OutputStream output = new FileOutputStream("src/com/company/task204/res")) {
+            int size = input.available();
+            for (int i = 0; i < size; i++) {
+                string.append((char) input.read());
+            }
+            char[] charArray = string.toString().toCharArray();
             for (char i : charArray) {
                 String s = codeTable.get(i).toString();
                 for (char ch : s.toCharArray())
@@ -143,11 +167,12 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
         }
     }
 
-    public static void decode(TreeMap<Character, StringBuilder> codeTable) {
+    public static void decode(String inputName, TreeMap<Character, StringBuilder> codeTable) {
         StringBuilder string = new StringBuilder();
         StringBuilder currentWord = new StringBuilder();
+        boolean flag = false;
         try (OutputStream output = new FileOutputStream("src/com/company/task204/result.txt");
-             InputStream input = new FileInputStream("src/com/company/task204/res")) {
+             InputStream input = new FileInputStream(inputName)) {
             int size = input.available();
             for (int i = 0; i < size; i++) {
                 string.append((char) input.read());
@@ -158,11 +183,16 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
                 } else {
                     currentWord.append("1");
                 }
-                if (codeTable.containsValue(currentWord)) {
-                    for (char ch : currentWord.toString().toCharArray()) {
-                        output.write(ch);
+                Set<Map.Entry<Character, StringBuilder>> set = codeTable.entrySet();
+                for (Map.Entry<Character, StringBuilder> me : set) {
+                    if (me.getValue().toString().equals(currentWord.toString())) {
+                        output.write(me.getKey());
+                        flag = true;
                     }
-                    currentWord.delete(0, currentWord.length() - 1);
+                }
+                if (flag) {
+                    currentWord.delete(0, currentWord.length());
+                    flag = false;
                 }
             }
 
