@@ -3,6 +3,12 @@ package com.company.task204;
 import java.io.*;
 import java.util.*;
 
+/**
+ * @author Dmitry Shiryhalov
+ * @version 1.0
+ * on 10.02.2019.
+ */
+
 public class HuffmanTree implements Comparable<HuffmanTree> {
     Node root;
 
@@ -20,19 +26,48 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
     public void setRoot(Node root) {
         this.root = root;
     }
-
+    /**
+     * Класс для представления узла
+     */
     private static class Node {
+        /**
+         * Частота
+         */
         private Integer frequency;
+        /**
+         * Символ
+         */
         private Character character;
+        /**
+         * Левый потомок
+         */
         private Node leftChild;
+        /**
+         * Правый потомок
+         */
         private Node rightChild;
+        /**
+         * Родитель
+         */
         private Node parent;
 
+        /**
+         * Конструктор для узла
+         *
+         * @param frequency   частота
+         * @param character символ
+         */
         Node(Integer frequency, Character character) {
             this.frequency = frequency;
             this.character = character;
         }
 
+        /**
+         * Конструктор для узла
+         *
+         * @param leftChild   левый потомок
+         * @param rightChild правый потомок
+         */
         Node(HuffmanTree leftChild, HuffmanTree rightChild) {
             this.frequency = leftChild.root.frequency + rightChild.root.frequency;
             this.leftChild = leftChild.root;
@@ -40,7 +75,9 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
             leftChild.root.setParent(this);
             rightChild.root.setParent(this);
         }
-
+        /**
+         * Get-еры, Set-еры:
+         */
         Integer getFrequency() {
             return frequency;
         }
@@ -92,6 +129,11 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
         }
     }
 
+    /**
+     * Счетчик частот
+     *
+     * @param inputName   путь к исходному файлу
+     */
     private static int[] frequencyCounter(String inputName) {
         int[] frequencyChar = new int[256];
         StringBuilder string = new StringBuilder();
@@ -110,6 +152,11 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
         return frequencyChar;
     }
 
+    /**
+     * Построение дерева Хаффмана
+     *
+     * @param inputName   путь к исходному файлу
+     */
     public void buildTree(String inputName) {
         int[] frequencyChar = frequencyCounter(inputName);
         PriorityQueue<HuffmanTree> trees = new PriorityQueue<>();
@@ -126,6 +173,9 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
         setRoot(trees.peek().getRoot());
     }
 
+    /**
+     * Таблица кодов Хаффмана
+     */
     public TreeMap<Character, StringBuilder> codeTable() {
         TreeMap<Character, StringBuilder> codeTable = new TreeMap<>();
         codeTable.put(' ', new StringBuilder());
@@ -134,6 +184,12 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
         return codeTable;
     }
 
+    /**
+     * Рекурсивный метод для построения таблицы кодов Хаффмана
+     *
+     * @param currentNode лист
+     * @param codeTable таблица кодов Хаффмана
+     */
     private void encodeTree(Node currentNode, TreeMap<Character, StringBuilder> codeTable) {
         if (currentNode.getCharacter() != null) {
             StringBuilder sb = new StringBuilder(codeTable.get(' ').toString());
@@ -148,6 +204,12 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
         }
     }
 
+    /**
+     * Статический метод кодировки
+     *
+     * @param inputName путь к исходному файлу
+     * @param codeTable таблица кодов Хаффмана
+     */
     public static void encode(String inputName, TreeMap<Character, StringBuilder> codeTable) {
         StringBuilder string = new StringBuilder();
         try (InputStream input = new FileInputStream(inputName);
@@ -167,6 +229,12 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
         }
     }
 
+    /**
+     * Статический метод декодировки
+     *
+     * @param inputName путь к исходному файлу
+     * @param codeTable таблица кодов Хаффмана
+     */
     public static void decode(String inputName, TreeMap<Character, StringBuilder> codeTable) {
         StringBuilder string = new StringBuilder();
         StringBuilder currentWord = new StringBuilder();
@@ -201,6 +269,11 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
         }
     }
 
+    /**
+     * Вывод дерева
+     *
+     * @param currentNode лист
+     */
     private void traverseTree(Node currentNode) {
         if (currentNode != null) {
             traverseTree(currentNode.getLeftChild());
