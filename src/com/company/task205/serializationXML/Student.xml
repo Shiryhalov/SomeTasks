@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.8.0_191" class="java.beans.XMLDecoder">
+ <object class="com.company.task205.serializationXML.Student">
+  <void property="group">
+   <object class="com.company.task205.serializationXML.Group">
+    <void property="direction">
+     <string>Applied Mathematics</string>
+    </void>
+    <void property="groupNumber">
+     <int>355</int>
+    </void>
+   </object>
+  </void>
+  <void property="name">
+   <string>Dmitry</string>
+  </void>
+  <void property="surname">
+   <string>Shiryhalov</string>
+  </void>
+ </object>
+</java>

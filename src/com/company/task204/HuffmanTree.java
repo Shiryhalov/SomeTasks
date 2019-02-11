@@ -26,6 +26,7 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
     public void setRoot(Node root) {
         this.root = root;
     }
+
     /**
      * Класс для представления узла
      */
@@ -54,7 +55,7 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
         /**
          * Конструктор для узла
          *
-         * @param frequency   частота
+         * @param frequency частота
          * @param character символ
          */
         Node(Integer frequency, Character character) {
@@ -65,7 +66,7 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
         /**
          * Конструктор для узла
          *
-         * @param leftChild   левый потомок
+         * @param leftChild  левый потомок
          * @param rightChild правый потомок
          */
         Node(HuffmanTree leftChild, HuffmanTree rightChild) {
@@ -75,6 +76,7 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
             leftChild.root.setParent(this);
             rightChild.root.setParent(this);
         }
+
         /**
          * Get-еры, Set-еры:
          */
@@ -132,7 +134,7 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
     /**
      * Счетчик частот
      *
-     * @param inputName   путь к исходному файлу
+     * @param inputName путь к исходному файлу
      */
     private static int[] frequencyCounter(String inputName) {
         int[] frequencyChar = new int[256];
@@ -155,7 +157,7 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
     /**
      * Построение дерева Хаффмана
      *
-     * @param inputName   путь к исходному файлу
+     * @param inputName путь к исходному файлу
      */
     public void buildTree(String inputName) {
         int[] frequencyChar = frequencyCounter(inputName);
@@ -188,7 +190,7 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
      * Рекурсивный метод для построения таблицы кодов Хаффмана
      *
      * @param currentNode лист
-     * @param codeTable таблица кодов Хаффмана
+     * @param codeTable   таблица кодов Хаффмана
      */
     private void encodeTree(Node currentNode, TreeMap<Character, StringBuilder> codeTable) {
         if (currentNode.getCharacter() != null) {
@@ -256,6 +258,7 @@ public class HuffmanTree implements Comparable<HuffmanTree> {
                     if (me.getValue().toString().equals(currentWord.toString())) {
                         output.write(me.getKey());
                         flag = true;
+                        break;
                     }
                 }
                 if (flag) {

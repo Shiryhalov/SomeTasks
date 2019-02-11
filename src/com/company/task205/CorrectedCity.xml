@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CityData Name="Харьков">
+    <DistrictsData>
+        <DistrictData Name="Новобаварский" Area="34700" Population="108700">
+            <FirstNameData Name="Октябрьский"/>
+        </DistrictData>
+        <DistrictData Name="Холодногорский" Area="30400" Population="91300">
+            <FirstNameData Name="Ивано-Лысогорский"/>
+        </DistrictData>
+        <DistrictData Name="Киевский" Area="45700" Population="182199">
+            <FirstNameData Name="Кагановичский"/>
+        </DistrictData>
+        <DistrictData Name="Московский" Area="22700" Population="304800">
+            <FirstNameData Name="Сталинский"/>
+        </DistrictData>
+        <DistrictData Name="Индустриальный" Area="33400" Population="157900">
+            <FirstNameData Name="Орджоникидзевский "/>
+        </DistrictData>
+        <DistrictData Name="Слободской" Area="24300" Population="150000">
+            <FirstNameData Name="Коминтерновский"/>
+        </DistrictData>
+    </DistrictsData>
+</CityData>
